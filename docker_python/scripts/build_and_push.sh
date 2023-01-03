@@ -18,14 +18,6 @@ then
 fi
 src_dir=$CODEBUILD_SRC_DIR
 
-# Get the account number associated with the current IAM credentials
-account=$(aws sts get-caller-identity --query Account --output text)
-
-if [ $? -ne 0 ]
-then
-    exit 255
-fi
-
 # Get the region defined in the current configuration (default to us-west-2 if none defined)
 region=$AWS_REGION
 echo "Region value is : $region"
@@ -34,14 +26,14 @@ ecr_repo_name=$DOCKER_IMAGE_NAME"-ecr-repo"
 echo "value of ecr_repo_name is $ecr_repo_name"
 
 # || means if the first command succeed the second will never be executed
-aws ecr describe-repositories --repository-names ${ecr_repo_name} || aws ecr create-repository --repository-name ${ecr_repo_name}
+/usr/local/bin/aws ecr-public describe-repositories --repository-names ${ecr_repo_name} --region $AWS_REGION || /usr/local/bin/aws ecr create-repository --repository-name ${ecr_repo_name} --region $AWS_REGION
 
 image_name=$DOCKER_IMAGE_NAME-$CODEBUILD_BUILD_NUMBER
 
 # Get the login command from ECR and execute docker login
-aws ecr get-login-password | docker login --username AWS --password-stdin ${account}.dkr.ecr.${region}.amazonaws.com
+/usr/local/bin/aws ecr get-login-password --region $AWS_REGION  | docker login --username AWS --password-stdin public.ecr.aws
 
-fullname="${account}.dkr.ecr.${region}.amazonaws.com/${ecr_repo_name}:$image_name"
+fullname="public.ecr.aws/j2g3p3q6/${ecr_repo_name}:$image_name"
 echo "fullname is $fullname"
 # Build the docker image locally with the image name and then push it to ECR with the full name.
 
