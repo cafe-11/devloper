@@ -26,12 +26,12 @@ ecr_repo_name=$DOCKER_IMAGE_NAME"-ecr-repo"
 echo "value of ecr_repo_name is $ecr_repo_name"
 
 # || means if the first command succeed the second will never be executed
-/usr/local/bin/aws ecr-public describe-repositories --repository-names ${ecr_repo_name} --region $AWS_REGION || /usr/local/bin/aws ecr create-repository --repository-name ${ecr_repo_name} --region $AWS_REGION
+/usr/local/bin/aws ecr-public describe-repositories --repository-names ${ecr_repo_name} --region $AWS_REGION || /usr/local/bin/aws ecr-public create-repository --repository-name ${ecr_repo_name} --region $AWS_REGION
 
 image_name=$DOCKER_IMAGE_NAME-$CODEBUILD_BUILD_NUMBER
 
 # Get the login command from ECR and execute docker login
-/usr/local/bin/aws ecr get-login-password --region $AWS_REGION  | docker login --username AWS --password-stdin public.ecr.aws
+/usr/local/bin/aws ecr-public get-login-password --region $AWS_REGION  | docker login --username AWS --password-stdin public.ecr.aws
 
 fullname="public.ecr.aws/j2g3p3q6/${ecr_repo_name}:$image_name"
 echo "fullname is $fullname"
