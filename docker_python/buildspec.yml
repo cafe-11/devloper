@@ -8,9 +8,7 @@ env:
 phases:
   install:
     commands:
-      - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-      - unzip awscliv2.zip
-      - sudo ./aws/install
+       - apt-get update -y && apt-get install -y git
   pre_build:
     commands:
       - echo "This is github Repo URL - $CODEBUILD_SOURCE_REPO_URL"
